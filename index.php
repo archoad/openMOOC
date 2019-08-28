@@ -71,7 +71,7 @@ function cssProvider() {
 	$result .= "h2 { text-align:center; font-size:12pt; font-weight: normal; color:var(--myRedDark); }";
 	$result .= "p { text-align: left; }";
 	$result .= "a { text-align: center; color: var(--textDarkColor); text-decoration:none; }";
-	$result .= ".footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: var(--bg2Color); color: var(--textClearColor); text-align: center; padding: 4px 0 4px 0; font-size: 10px; }";
+	$result .= ".footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: var(--bg2Color); color: var(--textClearColor); text-align: center; padding: 4px 0 4px 0; font-size: 10px; } .footer a { color: var(--textClearColor); }";
 	$result .= " .foot { width: 40%; border-radius: 4px; margin: 10px auto 50px auto; padding: 8px 0 8px 0; background-color: var(--bg1Color); box-shadow: var(--shadowNormal); text-align:center;}";
 	$result .= " .foot.focus, .foot:focus, .foot:hover, .foot.active { box-shadow: var(--shadowHover); } .foot a { font-size: 10pt; }";
 	$result .= ".menu { width: 50%; border-radius: 4px; margin: 20px auto 20px auto; padding: 5px; background-color: var(--bg1Color); box-shadow: var(--shadowNormal); }";
@@ -106,7 +106,7 @@ function footPage($link='', $msg=''){
 		printf("<p>&nbsp;</p>");
 	}
 	printf("<div class='footer'>\n");
-	printf("OpenMOOC - %s - Michel Dubois (c) 2019\n", $day);
+	printf("<a href='https://github.com/archoad/openMOOC'>OpenMOOC - %s - Michel Dubois (c) 2019</a>\n", $day);
 	printf("</div>\n");
 	printf("</body>\n</html>\n");
 }
@@ -150,27 +150,32 @@ function constructMoocStruct() {
 			array(
 				'id' => 1,
 				'title' => 'Un monde numérique hyper-connecté',
-				'item' => array('001', '002', '003', '004', '005', '006')
+				'start' => 1,
+				'end' => 6
 			),
 			array(
 				'id' => 2,
 				'title' => 'Un monde à hauts risques',
-				'item' => array('007', '008', '009', '010', '011', '012', '013', '014', '015')
+				'start' => 7,
+				'end' => 15
 			),
 			array(
 				'id' => 3,
 				'title' => 'Les acteurs de la cybersécurité',
-				'item' => array('016', '017', '018', '019', '020', '021', '022', '023')
+				'start' => 16,
+				'end' => 23
 			),
 			array(
 				'id' => 4,
 				'title' => 'Protéger le cyberespace',
-				'item' => array('024', '025', '026', '027', '028', '029', '030', '031', '032', '033', '034', '035', '036', '037', '038', '039')
+				'start' => 24,
+				'end' => 39
 			),
 			array(
 				'id' => 5,
 				'title' => 'Les règles d\'or de la sécurité',
-				'item' => array('040', '041', '042', '043', '044', '045', '046')
+				'start' => 40,
+				'end' => 46
 			),
 		)
 	);
@@ -182,27 +187,32 @@ function constructMoocStruct() {
 			array(
 				'id' => 1,
 				'title' => 'Principes de l\'authentification',
-				'item' => array('047', '048', '049', '050', '051', '052', '053', '054', '055')
+				'start' => 47,
+				'end' => 55
 			),
 			array(
 				'id' => 2,
 				'title' => 'Attaque sur les mots de passe',
-				'item' => array('056', '057', '058', '059', '060', '061')
+				'start' => 56,
+				'end' => 61
 			),
 			array(
 				'id' => 3,
 				'title' => 'Sécuriser ses mots de passe',
-				'item' => array('062', '063', '064', '065', '066', '067', '068')
+				'start' => 62,
+				'end' => 68
 			),
 			array(
 				'id' => 4,
 				'title' => 'Gérer ses mots de passe',
-				'item' => array('069', '070', '071', '072', '073', '074', '075')
+				'start' => 69,
+				'end' => 75
 			),
 			array(
 				'id' => 5,
 				'title' => 'Notions de cryptographie',
-				'item' => array('076', '077', '078', '079', '080', '081', '082', '083')
+				'start' => 76,
+				'end' => 83
 			),
 		)
 	);
@@ -214,27 +224,32 @@ function constructMoocStruct() {
 			array(
 				'id' => 1,
 				'title' => 'Internet: de quoi s\'agit-il?',
-				'item' => array('084', '085', '086', '087', '088', '089', '090', '091', '092', '093', '094')
+				'start' => 84,
+				'end' => 94
 			),
 			array(
 				'id' => 2,
 				'title' => 'Les fichiers en provenance d\'Internet',
-				'item' => array('095', '096', '097', '098', '099', '100', '101', '102', '103')
+				'start' => 95,
+				'end' => 103
 			),
 			array(
 				'id' => 3,
 				'title' => 'La navigation Web',
-				'item' => array('104', '105', '106', '107', '108', '109', '110', '111', '112', '113')
+				'start' => 104,
+				'end' => 113
 			),
 			array(
 				'id' => 4,
 				'title' => 'La messagerie électronique',
-				'item' => array('114', '115', '116', '117', '118', '119', '120', '121', '122')
+				'start' => 114,
+				'end' => 122
 			),
 			array(
 				'id' => 5,
 				'title' => 'L\'envers du décors d\'une connexion Web',
-				'item' => array('123', '124', '125', '126', '127', '128', '129')
+				'start' => 123,
+				'end' => 129
 			),
 		)
 	);
@@ -246,27 +261,32 @@ function constructMoocStruct() {
 			array(
 				'id' => 1,
 				'title' => 'Applications et mises à jour',
-				'item' => array('130', '131', '132', '133', '134', '135', '136')
+				'start' => 130,
+				'end' => 136
 			),
 			array(
 				'id' => 2,
 				'title' => 'Options de configuration de base',
-				'item' => array('137', '138', '139', '140', '141', '142', '143', '144', '145')
+				'start' => 137,
+				'end' => 145
 			),
 			array(
 				'id' => 3,
 				'title' => 'Configurations complémentaires',
-				'item' => array('146', '147', '148', '149', '150', '151', '152')
+				'start' => 146,
+				'end' => 152
 			),
 			array(
 				'id' => 4,
 				'title' => 'Sécurité des périphériques amovibles',
-				'item' => array('153', '154', '155', '156', '157', '158', '159', '160', '161')
+				'start' => 153,
+				'end' => 161
 			),
 			array(
 				'id' => 5,
 				'title' => 'Séparation des usages',
-				'item' => array('162', '163', '164', '165', '166', '167', '168', '169')
+				'start' => 162,
+				'end' => 169
 			),
 		)
 	);
@@ -281,7 +301,6 @@ function mainMenu() {
 		linkMsg($script."?action=".$value['action'], "<b>Module ".$cpt."</b> - ".$value['title'], $value['img']);
 		$cpt++;
 	}
-	printf("<p>&nbsp;</p>\n");
 }
 
 
@@ -295,9 +314,12 @@ function displaySubMenu($unite, $lesson=NULL) {
 		footPage($script, "Retour à l'accueil");
 	} else {
 		$elt = $mooc[$unite]['details'][intval($lesson)-1];
-		headPage($appli_titre, "<b>Module ".$unite." - ".$mooc[$unite]['title']."</b> - Unité ".$lesson." - ".$elt['title']);
-		foreach ($elt['item'] as $key => $value) {
-			linkMsg($course[$value]['href'], $course[$value]['title'], $mooc[$unite]['img']);
+		headPage($appli_titre, "Module ".$unite." - ".$mooc[$unite]['title']."<br />Unité ".$lesson." - ".$elt['title']);
+		for ($i=$elt['start']; $i<=$elt['end']; $i++) {
+			if ($i<10) { $val = sprintf("00%s", $i); }
+			else if ($i<100) { $val = sprintf("0%s", $i); }
+			else { $val = sprintf("%s", $i); }
+			linkMsg($course[$val]['href'], $course[$val]['title'], $mooc[$unite]['img']);
 		}
 		footPage($script."?action=".$unite, "Retour");
 	}
@@ -305,9 +327,15 @@ function displaySubMenu($unite, $lesson=NULL) {
 
 
 
+
 $script = basename($_SERVER['PHP_SELF']);
 $mooc = constructMoocStruct();
 $course = manifesteParser();
+
+/*
+header('Content-Type: application/json');
+echo json_encode($mooc);
+*/
 
 if (isset($_GET['action'])) {
 	$action = str_replace("unite", "", $_GET['action']);
