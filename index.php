@@ -23,7 +23,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // --------------------
 // Définition des variables de base
-$appli_titre = ("OpenMOOC");
+$appli_titre = "OpenMOOC";
+$db_file = "users.db";
+$cipherMode = "AES-256-CFB";
+$key = "AjfdYifeNlfdfn83nfd67";
 // --------------------
 
 
@@ -62,35 +65,16 @@ function getImgData($imgFile) {
 }
 
 
-function cssProvider() {
-	$result = "@charset 'utf-8';";
-	$result .= ":root { --bg0Color: #e9e4db; --bg1Color: #9eb1bb; --bg2Color: #4d636f; --textDarkColor: #444444; --textClearColor: #f5f7f8; --myRedDark: #c9302c; --shadowNormal: 6px 6px 6px rgba(0, 0, 0, 0.2); --shadowHover: 2px 2px 2px rgba(0, 0, 0, 0.2); }";
-	$result .= "* { box-sizing: border-box; } html { height: 100%; }";
-	$result .= "body { width: 100%; height: 100%; margin: 0; background-color: var(--bg0Color); font-family: Tahoma; font-size: 10pt; }";
-	$result .= "h1 { text-align: center; font-size: 12pt; }";
-	$result .= "h2 { text-align:center; font-size:12pt; font-weight: normal; color:var(--myRedDark); }";
-	$result .= "p { text-align: left; }";
-	$result .= "a { text-align: center; color: var(--textDarkColor); text-decoration:none; }";
-	$result .= ".footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: var(--bg2Color); color: var(--textClearColor); text-align: center; padding: 4px 0 4px 0; font-size: 10px; } .footer a { color: var(--textClearColor); }";
-	$result .= " .foot { width: 40%; border-radius: 4px; margin: 10px auto 50px auto; padding: 8px 0 8px 0; background-color: var(--bg1Color); box-shadow: var(--shadowNormal); text-align:center;}";
-	$result .= " .foot.focus, .foot:focus, .foot:hover, .foot.active { box-shadow: var(--shadowHover); } .foot a { font-size: 10pt; }";
-	$result .= ".menu { width: 50%; border-radius: 4px; margin: 20px auto 20px auto; padding: 5px; background-color: var(--bg1Color); box-shadow: var(--shadowNormal); }";
-	$result .= ".menu.focus, .menu:focus, .menu:hover, .menu.active { box-shadow: var(--shadowHover); }";
-	$result .= ".menu img { padding: 5px 15px 5px 5px; width: 50px; } .menu a { font-size: 12pt; text-align: center; }";
-	return $result;
-}
-
-
 function headPage($titre, $sousTitre=''){
-	header("cache-control:no-cache, must-revalidate");
-	header("Expires:Mon, 26 Jul 1997 05:00:00 GMT");
-	header("Content-type:text/html; charset=utf-8");
+	header("cache-control: no-cache, no-store, max-age=0, must-revalidate");
+	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+	header("Content-type: text/html; charset=utf-8");
 	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
-	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />\n");
+	printf("<link href='styles.css' rel='StyleSheet' type='text/css' media='all' />\n");
 	printf("<title>%s</title>\n", $titre);
-	printf("<style>%s</style>\n", cssProvider());
-	printf("</head>\n<body>\n<h1>%s</h1>\n", $titre);
+	printf("</head>\n<body>\n");
+	printf("<h1>%s</h1>\n", $titre);
 	if ($sousTitre !== '') {
 		printf("<h2>%s</h2>\n", $sousTitre);
 	}
@@ -98,7 +82,8 @@ function headPage($titre, $sousTitre=''){
 
 
 function footPage($link='', $msg=''){
-	$day = mb_strtolower(strftime("%A %d %B %Y", time()));
+	$infos = "<a href='https://github.com/archoad/openMOOC'>OpenMOOC - Michel Dubois (c) 2019</a>";
+	$logoff = "<a href='index.php?action=disconnect'>Déconnexion</a>";
 	if (strlen($link) AND strlen($msg)) {
 		printf("<div class='foot'>\n");
 		printf("<a href='%s'>%s</a>\n", $link, $msg);
@@ -106,15 +91,22 @@ function footPage($link='', $msg=''){
 		printf("<p>&nbsp;</p>");
 	}
 	printf("<div class='footer'>\n");
-	printf("<a href='https://github.com/archoad/openMOOC'>OpenMOOC - %s - Michel Dubois (c) 2019</a>\n", $day);
+	if (isset($_SESSION['id'])) {
+		printf("%s - %s %s (%s) - %s", $infos, $_SESSION['prenom'], $_SESSION['nom'], $_SESSION['login'], $logoff);
+	} else {
+		printf("%s", $infos);
+	}
 	printf("</div>\n");
 	printf("</body>\n</html>\n");
 }
 
 
-function linkMsg($link, $msg, $img) {
+function linkMsg($link, $msg, $img, $lesson=0) {
 	printf("<div class='menu'>\n<table>\n<tr>\n");
 	printf("<td><img src='%s' alt='info' /></td>\n", $img);
+	if ($lesson === 1) { printf("<td><span class='dot redcolor'>&nbsp;</span></td>\n"); }
+	if ($lesson === 2) { printf("<td><span class='dot orangecolor'>&nbsp;</span></td>\n"); }
+	if ($lesson === 3) { printf("<td><span class='dot greencolor'>&nbsp;</span></td>\n"); }
 	printf("<td><a href='%s'>%s</a></td>\n", $link, $msg);
 	printf("</tr></table></div>\n");
 }
@@ -145,7 +137,7 @@ function constructMoocStruct() {
 	$mooc[1] = array(
 		'title' => "Panorama de la SSI",
 		'img' => $shield,
-		'action' => 'unite1',
+		'action' => 1,
 		'details' => array(
 			array(
 				'id' => 1,
@@ -182,7 +174,7 @@ function constructMoocStruct() {
 	$mooc[2] = array(
 		'title' => "Sécurité de l'authentification",
 		'img' => $padlock,
-		'action' => 'unite2',
+		'action' => 2,
 		'details' => array(
 			array(
 				'id' => 1,
@@ -219,7 +211,7 @@ function constructMoocStruct() {
 	$mooc[3] = array(
 		'title' => "Sécurité sur Internet",
 		'img' => $internet,
-		'action' => 'unite3',
+		'action' => 3,
 		'details' => array(
 			array(
 				'id' => 1,
@@ -256,7 +248,7 @@ function constructMoocStruct() {
 	$mooc[4] = array(
 		'title' => "Sécurité du poste de travail et nomadisme",
 		'img' => $laptop,
-		'action' => 'unite4',
+		'action' => 4,
 		'details' => array(
 			array(
 				'id' => 1,
@@ -294,41 +286,235 @@ function constructMoocStruct() {
 }
 
 
+function computeModuleColor($module) {
+	global $db_file, $mooc;
+	$elt = $mooc[$module]['details'];
+	$tmp = 0;
+	for ($cpt=1; $cpt<=count($elt); $cpt++) {
+		$unite = sprintf("%s:%s", $module, $cpt);
+		$tmp += intval(computeUniteColor($unite));
+	}
+	if ($tmp == 15) { return 3; }
+	else if ($tmp > 5) { return 2; }
+	else { return 1; }
+}
+
+
+function computeUniteColor($unite) {
+	global $db_file, $mooc, $course;
+	$unite = explode(':', $unite);
+	$db = new SQLite3($db_file);
+	$request = sprintf("SELECT lessons FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
+	$result = $db->query($request);
+	$row = $result->fetchArray();
+	$db->close();
+	$elt = $mooc[intval($unite[0])]['details'][intval($unite[1])-1];
+	$start = intval($elt['start']);
+	$end = intval($elt['end']);
+	$nbrLessons = $end-$start+1;
+	$cpt = 0;
+	for ($i=$start; $i<=$end; $i++) {
+		$lesson = hrefToLesson($course[counterToLessonVal($i)]['href']);
+		if (strpos($row['lessons'], $lesson)) { $cpt += 1; }
+	}
+	if ($cpt == 0) { return 1; }
+	if ($cpt <  $nbrLessons) { return 2; }
+	if ($cpt ===  $nbrLessons) { return 3; }
+}
+
+
 function mainMenu() {
-	global $mooc, $course, $script;
-	$cpt = 1;
+	global $mooc;
 	foreach ($mooc as $key => $value) {
-		linkMsg($script."?action=".$value['action'], "<b>Module ".$cpt."</b> - ".$value['title'], $value['img']);
-		$cpt++;
+		$color = computeModuleColor($key);
+		linkMsg("index.php?action=".$value['action'], "<b>Module ".$key."</b> - ".$value['title'], $value['img'], $color);
 	}
 }
 
 
 function displaySubMenu($unite, $lesson=NULL) {
-	global $appli_titre, $mooc, $script, $course;
+	global $appli_titre, $mooc, $course;
 	if (is_null($lesson)) {
 		headPage($appli_titre, "Module ".$unite." - ".$mooc[$unite]['title']);
 		foreach ($mooc[$unite]['details'] as $key => $value) {
-			linkMsg($script."?action=".$mooc[$unite]['action'].'_'.$value['id'], "<b>Unité ".$value['id']."</b> - ".$value['title'], $mooc[$unite]['img']);
+			$lesson = $unite.':'.$value['id'];
+			$color = computeUniteColor($lesson);
+			linkMsg("index.php?action=unite".$mooc[$unite]['action'].'_'.$value['id'], "<b>Unité ".$value['id']."</b> - ".$value['title'], $mooc[$unite]['img'], $color);
 		}
-		footPage($script, "Retour à l'accueil");
+		footPage("index.php", "Retour à l'accueil");
 	} else {
 		$elt = $mooc[$unite]['details'][intval($lesson)-1];
 		headPage($appli_titre, "Module ".$unite." - ".$mooc[$unite]['title']."<br />Unité ".$lesson." - ".$elt['title']);
 		for ($i=$elt['start']; $i<=$elt['end']; $i++) {
-			if ($i<10) { $val = sprintf("00%s", $i); }
-			else if ($i<100) { $val = sprintf("0%s", $i); }
-			else { $val = sprintf("%s", $i); }
-			linkMsg($course[$val]['href'], $course[$val]['title'], $mooc[$unite]['img']);
+			$val = counterToLessonVal($i);
+			if (isLessonDone($course[$val]['href'])) { $color = 3; } else { $color = 1; }
+			linkMsg('index.php?action=redirect&value='.base64_encode($course[$val]['href']), $course[$val]['title'], $mooc[$unite]['img'], $color);
 		}
-		footPage($script."?action=".$unite, "Retour");
+		footPage("index.php?action=".$unite, "Retour");
+	}
+}
+
+
+function counterToLessonVal($cpt) {
+	$val = '';
+	if ($cpt<10) { $val = sprintf("00%s", $cpt); }
+	else if ($cpt<100) { $val = sprintf("0%s", $cpt); }
+	else { $val = sprintf("%s", $cpt); }
+	return $val;
+}
+
+
+function cipherPassword($passwd) {
+	global $cipherMode, $key;
+	$ivLength = openssl_cipher_iv_length($cipherMode);
+	$iv = openssl_random_pseudo_bytes($ivLength);
+	$result = openssl_encrypt($passwd, $cipherMode, $key, $options=0, $iv);
+	return base64_encode($iv.$result);
+}
+
+
+function decipherPassword($cipher) {
+	global $cipherMode, $key;
+	$cipher = base64_decode($cipher);
+	$ivLength = openssl_cipher_iv_length($cipherMode);
+	$iv = substr($cipher, 0, $ivLength);
+	$cipher = substr($cipher, $ivLength);
+	$result = openssl_decrypt($cipher, $cipherMode, $key, $options=0, $iv);
+	return $result;
+}
+
+
+function validateInputs() {
+	printf("<script>\n");
+	printf("function champs_ok(form) {\n");
+	printf("for(i=0; i<form.elements.length; i++) {\n");
+	printf("if (form.elements[i].value === '') {\n");
+	printf("alert('Formulaire incomplet', form.elements[i]);\n");
+	printf("return false;}}return true;}\n");
+	printf("</script>\n");
+}
+
+
+function initiateSession($data) {
+	session_regenerate_id();
+	date_default_timezone_set('Europe/Paris');
+	$_SESSION['day'] = mb_strtolower(strftime("%A %d %B %Y", time()));
+	$_SESSION['hour'] = mb_strtolower(strftime("%H:%M", time()));
+	$_SESSION['id'] = $data['id'];
+	$_SESSION['prenom'] = $data['firstname'];
+	$_SESSION['nom'] = $data['lastname'];
+	$_SESSION['login'] = $data['login'];
+}
+
+
+function destroySession() {
+	session_destroy();
+	unset($_SESSION);
+}
+
+
+function authMenu() {
+	validateInputs();
+	printf("<div class='auth'>\n");
+	printf("<form method='post' id='auth' action='index.php?action=connect' onsubmit='return champs_ok(this)'>\n");
+	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' />\n");
+	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' />\n");
+	printf("<input type='submit' id='valid' value='Connexion' />\n");
+	printf("</form>\n</div>\n");
+}
+
+
+function authentification($login, $password) {
+	global $db_file;
+	$db = new SQLite3($db_file);
+	$request = sprintf("SELECT * FROM users WHERE login='%s' LIMIT 1", $login);
+	$result = $db->query($request);
+	$row = $result->fetchArray();
+	$db->close();
+	if (isset($row)) {
+		$savedPasswd = decipherPassword($row['password']);
+		if (($login === $row['login']) and ($password === $savedPasswd)) {
+			return $row;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+}
+
+
+function createDatabase() {
+	global $db_file;
+	if (!file_exists($db_file)) {
+		$db = new SQLite3($db_file, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+		$db->exec("CREATE TABLE users(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, login TEXT, password TEXT, timepassed INT, lessons TEXT)");
+		$p = cipherPassword('toto29');
+		$db->exec("INSERT INTO users(firstname, lastname, login, password) VALUES ('Michel', 'Dubois', 'myshell', '.$p.')");
+		$db->close();
+	}
+}
+
+
+function hrefToLesson($href) {
+	$str = explode('/', $href);
+	if ($str[0] === 'FORMATION') {
+		$unite = explode('-', $str[2]);
+		$course = explode('module', $str[3]);
+		$lesson = sprintf("%s:%s:%s", $unite[0], $unite[1], $course[1]);
+	} else if ($str[0] === 'EVALUATIONS') {
+		$unite = explode('-', $str[2]);
+		$lesson = sprintf("%s:%s:e", $unite[0], $unite[1]);
+	} else if ($str[0] === 'VIDEOS') {
+		$unite = explode('_', $str[1]);
+		$course = explode('.', $unite[2]);
+		if ($course[0] === 'itw') {
+			$lesson = sprintf("%s:u1:i", $unite[1]);
+		} else {
+			$lesson = sprintf("%s:%s:v", $unite[1], $course[0]);
+		}
+	}
+	return $lesson;
+}
+
+
+function updateLessons($href) {
+	global $db_file;
+	$lesson = hrefToLesson($href);
+	$db = new SQLite3($db_file);
+	$request = sprintf("SELECT lessons FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
+	$result = $db->query($request);
+	$row = $result->fetchArray();
+	$tmp = $row['lessons'];
+	print_r($tmp);
+	if (strpos($tmp, $lesson) === false) {
+		$tmp = $tmp.'#'.$lesson;
+		$request = sprintf("UPDATE users SET lessons='%s' WHERE login='%s'", $tmp, $_SESSION['login']);
+		$db->exec($request);
+	}
+	$db->close();
+}
+
+
+function isLessonDone($href) {
+	global $db_file;
+	$lesson = hrefToLesson($href);
+	$db = new SQLite3($db_file);
+	$request = sprintf("SELECT lessons FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
+	$result = $db->query($request);
+	$row = $result->fetchArray();
+	$tmp = explode('#', $row['lessons']);
+	if (in_array($lesson, $tmp)) {
+		return true;
+	} else {
+		return false;
 	}
 }
 
 
 
 
-$script = basename($_SERVER['PHP_SELF']);
+createDatabase();
 $mooc = constructMoocStruct();
 $course = manifesteParser();
 
@@ -337,18 +523,48 @@ header('Content-Type: application/json');
 echo json_encode($mooc);
 */
 
+session_start();
 if (isset($_GET['action'])) {
-	$action = str_replace("unite", "", $_GET['action']);
-	$detail = explode("_", $action);
-	if (isset($action[1])) {
-		displaySubMenu($detail[0], $detail[1]);
-	} else {
-		displaySubMenu($detail[0]);
+	switch ($_GET['action']) {
+		case 'connect':
+			$data = authentification($_POST['login'], $_POST['password']);
+			headPage($appli_titre);
+			if ($data) {
+				initiateSession($data);
+				mainMenu();
+			} else {
+				authMenu();
+			}
+			footPage();
+			break;
+		case 'disconnect':
+			destroySession();
+			header('Location: index.php');
+			break;
+		case 'redirect':
+			$lesson = base64_decode($_GET['value']);
+			updateLessons($lesson);
+			header('Location: '.$lesson);
+			break;
+		default:
+			$action = str_replace("unite", "", $_GET['action']);
+			$detail = explode("_", $action);
+			if (isset($action[1])) {
+				displaySubMenu($detail[0], $detail[1]);
+			} else {
+				displaySubMenu($detail[0]);
+			}
+			break;
 	}
 } else {
 	headPage($appli_titre);
-	mainMenu();
+	if (isset($_SESSION['id'])) {
+		mainMenu();
+	} else {
+		authMenu();
+	}
+	footPage();
 }
-footPage();
+
 
 ?>
