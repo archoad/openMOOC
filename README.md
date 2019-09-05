@@ -1,11 +1,11 @@
 # openMOOC
 
-Parse a manifesto in Scorm2004 format and display modules and lessons.
+openMOOC a pour objectif de parser un manifeste `imsmanifest.xml` au format SCORM2004 et d'afficher les modules et leçons.
+
+openMOOC offre également une gestion simplifiée des utilisateurs et de leur progression.
+
+openMOOC est plus spécifique dédié à la gestion du MOOC SecNumAcadémie de l'ANSSI. Il peut cependant s'adapter à d'autres MOOC.
 
 # Usage
 
-Just put the `index.php` on the same directory that the `imsmanifest.xml` file. By accessing the directory with your browser, you will see your mooc.
-
-# Disclaimer
-
-This development is specifically done to display the mooc of the french national security agency. However some features could be used to read other scorm2004 moocs. 
+Vous avez juste à déposer les fichier `index.php` et `styles.css` dans le même répertoire que le fichier `imsmanifest.xml`. En accédant à ce répertoire avec votre navigateur, la page de gestion du MOCC s'affichera.

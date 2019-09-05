@@ -21,6 +21,8 @@
 
 * {
 	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
 }
 
 html {
@@ -39,6 +41,7 @@ body {
 h1 {
 	text-align: center;
 	font-size: 12pt;
+	padding: 20px 0 0 0;
 }
 
 h2 {
@@ -56,6 +59,51 @@ a {
 	text-align: center;
 	color: var(--textDarkColor);
 	text-decoration:none;
+}
+
+.user {
+	width: 60%;
+	margin: 30px auto 30px auto;
+}
+
+.user fieldset {
+	border-color: var(--bg2Color);
+	border-radius:8px;
+}
+
+.user table {
+	margin: 5px auto 5px auto;
+	border-collapse: separate;
+	border-spacing: 20px 2px;
+}
+
+.user td {
+	text-align: center;
+}
+
+.user input {
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid var(--myGreenLight);
+	padding: 5px;
+	margin: 15px;
+	font-size: 14px;
+	color: var(--textDarkColor);
+}
+
+.user input:focus {
+	border-bottom: 2px solid var(--myRedLight);
+}
+
+.user p {
+	width: 80%;
+	margin: 10px auto 10px auto;
+	padding: 5px;
+	text-align: center;
+	color: var(--textClearColor);
+	background-color: var(--myRedLight);
+	font-size: 16px;
+	border-radius: 4px;
 }
 
 .footer {
@@ -145,7 +193,11 @@ a {
 	color: var(--textDarkColor);
 }
 
+.auth a {
+	color: var(--textClearColor);
+}
 
+.user input[type=submit],
 .auth input[type=submit] {
 	text-transform: uppercase;
 	outline: 0;
@@ -159,6 +211,9 @@ a {
 	box-shadow:var(--shadowNormal);
 }
 
+.user input:hover[type=submit],
+.user input:active[type=submit],
+.user input:focus[type=submit],
 .auth input:hover[type=submit],
 .auth input:active[type=submit],
 .auth input:focus[type=submit] {
@@ -173,7 +228,6 @@ a {
 	display: inline-block;
 }
 
-
 .redcolor {
 	background-color: var(--myRedLight);
 }
@@ -184,4 +238,29 @@ a {
 
 .greencolor {
 	background-color: var(--myGreenLight);
+}
+
+.bar-container {
+	width: 40%;
+	margin: 30px auto 30px auto;
+}
+
+.bar-background {
+	width: 100%;
+	text-align: center;
+	border-radius: 25px;
+	background-color: var(--bg2Color);
+	box-shadow: var(--shadowNormal);
+	padding: 5px;
+}
+
+.bar-foreground {
+	text-align: center;
+	padding: 10px 2px;
+	border-radius: 25px;
+	color: var(--textClearColor);
+	background-color: var(--myGreenLight);
+	box-shadow:
+		inset 0 2px 9px  rgba(255,255,255,0.3),
+		inset 0 -2px 6px rgba(0,0,0,0.4);
 }
