@@ -52,7 +52,11 @@ h2 {
 }
 
 p {
-	text-align: left;
+	width: 30%;
+	margin: auto;
+	padding: 20px;
+	text-align: center;
+	color: var(--textDarkColor);
 }
 
 a {

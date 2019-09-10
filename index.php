@@ -370,6 +370,7 @@ function displaySubMenu($unite, $lesson=NULL) {
 	} else {
 		$elt = $mooc[$unite]['details'][intval($lesson)-1];
 		headPage($appli_titre, "Module ".$unite." - ".$mooc[$unite]['title']."<br />Unité ".$lesson." - ".$elt['title']);
+		printf("<p>Une fois que vous avez terminé la leçon, cliquez sur le bouton <strong>Quitter</strong> pour revenir à la page d'accueil.</p>\n");
 		for ($i=$elt['start']; $i<=$elt['end']; $i++) {
 			$val = counterToLessonVal($i);
 			if (isLessonDone($course[$val]['href'])) { $color = 3; } else { $color = 1; }
